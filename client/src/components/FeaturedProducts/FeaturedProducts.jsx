@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from "../Card/Card";
 import "./FeaturedProducts.scss";
+import axios from 'axios'
 
 const data = [
     {
@@ -42,8 +43,26 @@ const data = [
     },
 ]
 
+
+
 const FeaturedProducts = ({ type }) => {
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await axios.get(import.meta.env.VITE_REACT_APP_API_URL + "/products",
+                    {
+                        headers: {
+                            Authorization: "bearer " + import.meta.env.VITE_REACT_APP_API_TOKEN,
+                        }
+                    });
+                console.log(data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fetchData();
+    }, []);
 
     return (
         <div className="featuredProducts">

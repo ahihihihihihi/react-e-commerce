@@ -1,0 +1,1 @@
+docker run --name mysql-store --privileged -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=store -p 3303:3306 -d mysql:5.7
