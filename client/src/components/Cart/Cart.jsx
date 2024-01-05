@@ -2,54 +2,25 @@ import React, { useState } from "react";
 import "./Cart.scss";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch, useSelector } from "react-redux";
+import { removeItem, resetCart } from "../../redux/cartReducer";
 
-const products = [
-    {
-        id: 1,
-        img: "https://images.pexels.com/photos/1972115/pexels-photo-1972115.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        img2: "https://images.pexels.com/photos/1163194/pexels-photo-1163194.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        title: "Long Sleeve Graphic T-shirt",
-        desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        isNew: true,
-        oldPrice: 19,
-        price: 12,
-    },
-    {
-        id: 2,
-        img:
-            "https://images.pexels.com/photos/1759622/pexels-photo-1759622.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        img2: "https://images.pexels.com/photos/1163194/pexels-photo-1163194.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        title: "Coat",
-        desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        isNew: true,
-        oldPrice: 19,
-        price: 12,
 
-    },
-
-    {
-        id: 3,
-        img: "https://images.pexels.com/photos/1457983/pexels-photo-1457983.jpeg?auto=compress&cs=tinys rgb&w=1600",
-        img2: "https://images.pexels.com/photos/1163194/pexels-photo-1163194.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        title: "Skirt",
-        desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        oldPrice: 19,
-        price: 12,
-    },
-    {
-        id: 4,
-        img: "https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinys rgb&w=1600",
-        img2: "https://images.pexels.com/photos/1163194/pexels-photo-1163194.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        title: "Hat",
-        desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        oldPrice: 19,
-        price: 12,
-    },
-]
 
 const Cart = (props) => {
 
     const { open, setOpen } = props
+
+    const products = useSelector((state) => state.cart.products);
+    const dispatch = useDispatch();
+
+    const totalPrice = () => {
+        let total = 0;
+        products.forEach((item) => {
+            total += item.quantity * item.price;
+        });
+        return total.toFixed(2);
+    };
 
     return (
         <div className="cart" >
@@ -59,26 +30,26 @@ const Cart = (props) => {
             </div>
             {products?.map((item) => (
                 <div className="item" key={item.id}>
-                    <img src={item.img} alt="" />
+                    <img src={import.meta.env.VITE_REACT_APP_UPLOAD_URL + item.img} alt="" />
                     <div className="details">
                         <h1>{item.title}</h1>
                         <p>{item.desc?.substring(0, 50)}</p>
                         <div className="price">
-                            1 x ${item.price}
+                            {item.quantity} x ${item.price}
                         </div>
                     </div>
                     <DeleteOutlinedIcon
                         className="delete"
-
+                        onClick={() => dispatch(removeItem(item.id))}
                     />
                 </div>
             ))}
             <div className="total">
                 <span>SUBTOTAL</span>
-                <span>$123</span>
+                <span>${totalPrice()}</span>
             </div>
             <button >PROCEED TO CHECKOUT</button>
-            <span className="reset" >
+            <span className="reset" onClick={() => dispatch(resetCart())}>
                 Reset Cart
             </span>
         </div>
